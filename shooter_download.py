@@ -65,13 +65,17 @@ def get_sub_address(szFilePath, languages):
         for lang in languages:
             values = {'filehash': filehash, 'pathinfo': szFilePath, 'format': 'json', 'lang' : lang}
             values = urllib.urlencode(values)
-            req = urllib2.Request(url, values)
-            response = urllib2.urlopen(req)
-            text = response.read()
-            if text == '\xff':
-                pass
-            else:
-                sublist = sublist + (json.loads(text))
+            try:
+                req = urllib2.Request(url, values)
+                response = urllib2.urlopen(req)
+                text = response.read()
+                if text == '\xff':
+                    pass
+                else:
+                    sublist = sublist + (json.loads(text))
+            except:
+                print u'网络连接错误！'
+                exit()
         return sublist
     else:
         print u'文件路径错误！'
@@ -90,6 +94,7 @@ def download_sub(sublist):
             number += 1
             filename = response.info()['Content-Disposition'].split('filename=')[1].rstrip(sub_ext) + '(' + str(number) + ')' + sub_ext
             urllib.urlretrieve(download_url, filename)
+        print u'下载完成！'
     else:
         print u'没有找到字幕！'
 
