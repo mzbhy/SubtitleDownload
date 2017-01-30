@@ -8,22 +8,22 @@
 
 1. 安装依赖项（按需）
 
-```bash
-sudo pip install docopt
-```
+	```bash
+	sudo pip install docopt
+	```
 
-2. 下载脚本（以Linux为例）
+2. 下载脚本
 
-```bash
-git clone https://github.com/lxalxy/SubtitleDownload.git
-cd SubtitleDownload
-```
+	```bash
+	git clone https://github.com/lxalxy/SubtitleDownload.git
+	cd SubtitleDownload
+	```
 
-3. 运行脚本下载字幕
+3. 运行脚本下载字幕（当路径存在特殊符号以及空格时，需要在路径外加双引号）
 
-```bash
-python shooter_download.py D:\test.avi
-```
+	```bash
+	python shooter_download.py D:\test.avi
+	```
 
 ## 参数说明
 
