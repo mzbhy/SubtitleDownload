@@ -24,11 +24,17 @@ import json
 import os
 import hashlib
 import sys
+import platform
 from docopt import docopt
 
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
+def isWindowsSystem():
+    return 'Windows' in platform.system()
+ 
+def isLinuxSystem():
+    return 'Linux' in platform.system()
 
 def ComputerFileHash(szFilePath):
     file_object = open(szFilePath, 'rb')
@@ -82,7 +88,8 @@ def get_sub_address(szFilePath, languages):
         exit()
 
 
-def download_sub(sublist):
+def download_sub(szFilePath, sublist):
+    path = os.path.dirname(szFilePath)
     if sublist:
         print u'找到了 %d 个字幕文件！' % len(sublist)
         number = 0
@@ -93,7 +100,10 @@ def download_sub(sublist):
             response = urllib2.urlopen(req)
             number += 1
             filename = response.info()['Content-Disposition'].split('filename=')[1].rstrip(sub_ext) + '(' + str(number) + ')' + sub_ext
-            urllib.urlretrieve(download_url, filename)
+            if isWindowsSystem():
+                urllib.urlretrieve(download_url, filename)
+            if isLinuxSystem():
+                urllib.urlretrieve(download_url, path + '/' + filename)
         print u'下载完成！'
     else:
         print u'没有找到字幕！'
@@ -109,7 +119,7 @@ def main():
         lang = ['eng']
     else:
         lang = ['chn']
-    download_sub(get_sub_address(szFilePath, lang))
+    download_sub(szFilePath, get_sub_address(szFilePath, lang))
 
 
 if __name__ == '__main__':
