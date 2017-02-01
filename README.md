@@ -1,6 +1,6 @@
 # SubtitleDownload
 
-利用射手API(https://www.shooter.cn/api/subapi.php)，自动下载字幕文件。（[API说明](https://docs.google.com/document/d/1ufdzy6jbornkXxsD-OGl3kgWa4P9WO5NZb6_QYZiGI0/preview)）
+利用[射手API](https://www.shooter.cn/api/subapi.php)，自动下载字幕文件。（[API说明](https://docs.google.com/document/d/1ufdzy6jbornkXxsD-OGl3kgWa4P9WO5NZb6_QYZiGI0/preview)）
 
 脚本用python2.7.10编写，利用urllib和urllib2获取URLs(Uniform Resource Locators)数据，利用json解析API返回数据，利用hashlib计算文件哈希值，利用docopt提供CLI接口。
 
