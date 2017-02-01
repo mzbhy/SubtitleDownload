@@ -6,16 +6,18 @@
 """通过射手API自动获取并下载字幕文件
 
 Usage:
-    shooter_download [-ce] <szFilePath>
+    shooter_download [-cer] <szFilePath>
 
 Options:
     -h,--help        显示帮助菜单
     -c               中文字幕(默认)
     -e               英文字幕
+    -r               递归下载(默认不递归)
 
 Example:
     shooter_download D:\test.avi
     shooter_download -c D:\test.avi
+    shooter_download -r D:\videos
 """
 
 import urllib
@@ -25,10 +27,12 @@ import os
 import hashlib
 import sys
 import platform
+import mimetypes
 from docopt import docopt
 
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
+
 
 def isWindowsSystem():
     return 'Windows' in platform.system()
@@ -100,6 +104,7 @@ def download_sub(szFilePath, sublist):
             response = urllib2.urlopen(req)
             number += 1
             filename = response.info()['Content-Disposition'].split('filename=')[1].rstrip(sub_ext) + '(' + str(number) + ')' + sub_ext
+            print u'正在下载第 %d 个字幕' % number
             if isWindowsSystem():
                 urllib.urlretrieve(download_url, filename)
             if isLinuxSystem():
@@ -107,6 +112,27 @@ def download_sub(szFilePath, sublist):
         print u'下载完成！'
     else:
         print u'没有找到字幕！'
+
+def download_sub_dir(szFilePath, languages, recursive):
+    if recursive:
+        g = os.walk(szFilePath)  
+        for path, d, filelist in g:  
+            for f in filelist:  
+                filename = os.path.join(path, f)
+                types = mimetypes.guess_type(filename)
+                mtype = types[0]
+                if mtype is not None and mtype.split('/')[0] == 'video':
+                    print u'正在处理:' + filename
+                    download_sub(filename, get_sub_address(filename, languages))
+    else:
+        for file in os.listdir(szFilePath):
+            filename = os.path.join(szFilePath, file)
+            if os.path.isfile(filename):
+                types = mimetypes.guess_type(filename)
+                mtype = types[0]
+                if mtype is not None and mtype.split('/')[0] == 'video':
+                    print u'正在处理:' + filename
+                    download_sub(filename, get_sub_address(filename, languages))
 
 
 def main():
@@ -119,7 +145,14 @@ def main():
         lang = ['eng']
     else:
         lang = ['chn']
-    download_sub(szFilePath, get_sub_address(szFilePath, lang))
+    if arguments['-r']:
+        recursive = True
+    else:
+        recursive = False
+    if os.path.isdir(szFilePath):
+        download_sub_dir(szFilePath, lang, recursive)
+    else:
+        download_sub(szFilePath, get_sub_address(szFilePath, lang))
 
 
 if __name__ == '__main__':
